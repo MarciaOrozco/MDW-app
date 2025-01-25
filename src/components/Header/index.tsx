@@ -1,4 +1,6 @@
 import { useNavigate } from "react-router-dom";
+import { signOut } from "firebase/auth";
+import { auth } from "../../config/firebase"; // Importa tu configuración de Firebase
 import { headerList, tokenList } from "./consts";
 
 const Header = () => {
@@ -8,6 +10,15 @@ const Header = () => {
 
   const handleClick = (link: string) => {
     navigate(link);
+  };
+
+  const handleSignOut = async () => {
+    try {
+      await signOut(auth);
+      navigate("/home");
+    } catch (error) {
+      console.error("Error signing out:", error);
+    }
   };
 
   const token = localStorage.getItem("token");
@@ -25,7 +36,11 @@ const Header = () => {
                     " cursor-pointer"
                   }
                   key={index}
-                  onClick={() => handleClick(item.link)}
+                  onClick={() =>
+                    item.title === "logout"
+                      ? handleSignOut()
+                      : handleClick(item.link)
+                  }
                 >
                   {item.title}
                 </li>
