@@ -25,7 +25,12 @@ const Header = () => {
 
   return (
     <header className="top-0 flex flex-row justify-between w-full bg-gray-50 p-4">
-      <div className="text-2xl flex-nowrap font-mono">bookstore</div>
+      <div
+        className="text-2xl flex-nowrap font-mono cursor-pointer hover:text-[#bb7b85]"
+        onClick={() => navigate("/")}
+      >
+        bookstore
+      </div>
       <nav className="flex justify-end w-auto items-center font-mono">
         <ul className="flex flex-row gap-3">
           {token
@@ -49,7 +54,7 @@ const Header = () => {
                 <li
                   className={
                     (path === item.link ? "underline font-bold" : "") +
-                    " cursor-pointer"
+                    " cursor-pointer hover:text-[#bb7b85]"
                   }
                   key={index}
                   onClick={() => handleClick(item.link)}
