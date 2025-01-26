@@ -9,6 +9,7 @@ import { onAuthStateChanged, User } from "firebase/auth";
 import { auth } from "./config/firebase";
 import Layout from "./components/Layout";
 import LogIn from "./pages/Login";
+import BookDetail from "./pages/BookDetail";
 
 function App() {
   const [user, setUser] = useState<User | null>(null);
@@ -43,7 +44,7 @@ function App() {
               </ProtectedRoute>
             }
           ></Route>
-          <Route path="/book/:id" element={<></>}></Route>
+          <Route path="/books/:id" element={<BookDetail />}></Route>
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </Layout>

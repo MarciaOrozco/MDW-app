@@ -6,6 +6,7 @@ export interface Book {
   image: string;
   author: string;
   isbn: string;
+  isAvailable: boolean;
   createdAt: string;
   updatedAt: string;
 }

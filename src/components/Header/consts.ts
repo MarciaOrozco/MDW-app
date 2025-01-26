@@ -20,7 +20,7 @@ export const tokenList: HeaderList[] = [
     link: "/",
   },
   {
-    title: "books",
+    title: "edit books",
     link: "/books",
   },
   {
