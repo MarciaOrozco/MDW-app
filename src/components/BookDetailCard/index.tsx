@@ -1,12 +1,14 @@
 import React from "react";
 import { Book } from "../../types/books";
 import nocover from "../../assets/nocover.png";
+import { useNavigate } from "react-router-dom";
 
 interface BookDetailCardProps {
   book: Book;
 }
 
 const BookDetailCard: React.FC<BookDetailCardProps> = ({ book }) => {
+  const navigate = useNavigate();
   return (
     <div className="bg-white shadow-lg rounded-lg overflow-hidden w-full max-w-5xl grid grid-cols-1 md:grid-cols-2 gap-8">
       <div className="flex justify-center items-center p-8">
@@ -34,6 +36,14 @@ const BookDetailCard: React.FC<BookDetailCardProps> = ({ book }) => {
               ? "Available in our inventory. Order now!"
               : "Currently unavailable, but check back soon!"}
           </p>
+        </div>
+        <div className="flex justify-end mt-auto">
+          <button
+            onClick={() => navigate(-1)}
+            className="px-4 py-2 bg-[#b67e87] text-white font-semibold rounded-lg shadow-md hover:bg-[#b9757f] transition duration-300"
+          >
+            Go Back
+          </button>
         </div>
       </div>
     </div>
