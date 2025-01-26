@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { Book } from "../../types/books";
+import nocover from "../../assets/nocover.png";
 
 interface BookCardProps {
   book: Book;
@@ -10,10 +11,10 @@ const BookCard: React.FC<BookCardProps> = ({ book }) => {
   return (
     <Link
       to={`/books/${book._id}`}
-      className="bg-white shadow-md rounded-lg overflow-hidden border flex flex-col items-center p-4 hover:shadow-lg transition-shadow duration-300"
+      className="bg-white shadow-md rounded-lg overflow-hidden border flex flex-col items-center p-4 hover:shadow-lg transition-shadow duration-300 "
     >
       <img
-        src={book.image}
+        src={book.image ? book.image : nocover}
         alt={book.name}
         className="w-full h-64 object-contain rounded-lg"
       />
