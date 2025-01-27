@@ -38,7 +38,7 @@ const Header = () => {
                 <li
                   className={
                     (path === item.link ? "underline font-bold" : "") +
-                    " cursor-pointer"
+                    " cursor-pointer hover:text-[#bb7b85]"
                   }
                   key={index}
                   onClick={() =>
