@@ -1,6 +1,6 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import "./App.css";
-import Books from "./pages/Books";
+
 import Home from "./pages/Home";
 import SignUp from "./pages/SignUp";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -10,6 +10,9 @@ import { auth } from "./config/firebase";
 import Layout from "./components/Layout";
 import LogIn from "./pages/Login";
 import BookDetail from "./pages/BookDetail";
+import AddBookPage from "./pages/AddBook";
+import Books from "./pages/Book";
+import EditBookPage from "./pages/EditBook";
 
 function App() {
   const [user, setUser] = useState<User | null>(null);
@@ -45,6 +48,23 @@ function App() {
             }
           ></Route>
           <Route path="/books/:id" element={<BookDetail />}></Route>
+
+          <Route
+            path="/add-book"
+            element={
+              <ProtectedRoute user={user}>
+                <AddBookPage />
+              </ProtectedRoute>
+            }
+          ></Route>
+          <Route
+            path="/edit-book/:id"
+            element={
+              <ProtectedRoute user={user}>
+                <EditBookPage />
+              </ProtectedRoute>
+            }
+          ></Route>
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </Layout>
