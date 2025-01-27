@@ -1,9 +1,13 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import api from "../../config/axios";
+import { useDispatch, useSelector } from "../../store/store";
+import { addBook } from "../../slices/books";
 
 const AddBookPage: React.FC = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { loading } = useSelector((state) => state.reducer.books);
+
   const [formData, setFormData] = useState({
     name: "",
     description: "",
@@ -23,10 +27,14 @@ const AddBookPage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await api.post("/books", formData);
+      const newBook = {
+        ...formData,
+        price: parseFloat(formData.price),
+      };
+      await dispatch(addBook(newBook));
       navigate("/books");
-    } catch (error) {
-      console.error("Error adding book:", error);
+    } catch (err) {
+      console.error("Error adding book:", err);
     }
   };
 
@@ -115,9 +123,10 @@ const AddBookPage: React.FC = () => {
 
         <button
           type="submit"
-          className="w-full hover:bg-[#d1919b]  bg-[#b9757f] text-white font-bold py-2 px-4 rounded-lg transition duration-300 "
+          className="w-full hover:bg-[#d1919b]  bg-[#b9757f] text-white font-bold py-2 px-4 rounded-lg transition duration-300"
+          disabled={loading}
         >
-          Add Book
+          {loading ? "Adding..." : "Add Book"}
         </button>
       </form>
     </div>
