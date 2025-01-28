@@ -11,7 +11,7 @@ import Layout from "./components/Layout";
 import LogIn from "./pages/Login";
 import BookDetail from "./pages/BookDetail";
 import AddBookPage from "./pages/AddBook";
-import Books from "./pages/Book";
+import Books from "./pages/Books";
 import EditBookPage from "./pages/EditBook";
 
 function App() {
