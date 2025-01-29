@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { signUpSchema } from "./validations";
 import { joiResolver } from "@hookform/resolvers/joi";
+import { useState } from "react";
 
 type FormValues = {
   email: string;
@@ -13,6 +14,7 @@ type FormValues = {
 
 const SignUp = () => {
   const navigate = useNavigate();
+  const [firebaseError, setFirebaseError] = useState<string | null>(null);
 
   const {
     register,
@@ -23,11 +25,19 @@ const SignUp = () => {
   });
 
   const handleSignUp = handleSubmit(async (data) => {
+    setFirebaseError(null);
     try {
       await createUserWithEmailAndPassword(auth, data.email, data.password);
       navigate("/");
-    } catch (error) {
-      console.error(error);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      if (error.code === "auth/email-already-in-use") {
+        setFirebaseError("Email is already in use.");
+      } else {
+        setFirebaseError(
+          "An unexpected error occurred. Please try again later."
+        );
+      }
     }
   });
 
@@ -38,14 +48,14 @@ const SignUp = () => {
         className="w-full max-w-md bg-gray-50 rounded-lg shadow-lg p-8"
       >
         <h2 className="text-2xl font-bold mb-6 text-gray-700 text-center">
-          sign Up
+          Sign Up
         </h2>
         <div className="mb-4">
           <label
             htmlFor="email"
             className="block text-sm font-medium text-gray-700 py-2"
           >
-            email
+            Email
           </label>
           <input
             id="email"
@@ -66,7 +76,7 @@ const SignUp = () => {
             htmlFor="password"
             className="block text-sm font-medium text-gray-700 py-2"
           >
-            password
+            Password
           </label>
           <input
             id="password"
@@ -89,7 +99,7 @@ const SignUp = () => {
             htmlFor="repeatPassword"
             className="block text-sm font-medium text-gray-700 py-2"
           >
-            repeat password
+            Repeat password
           </label>
           <input
             id="repeatPassword"
@@ -111,15 +121,22 @@ const SignUp = () => {
           type="submit"
           className="w-full hover:bg-[#d1919b]  bg-[#b9757f] text-white font-bold py-2 px-4 rounded-lg transition duration-300 "
         >
-          sign up
+          Sign up
         </button>
+        <div className="pt-4">
+          {firebaseError && (
+            <p className="text-red-600 text-sm mb-4 text-center">
+              {firebaseError}
+            </p>
+          )}
+        </div>
         <p className="text-sm text-gray-600 mt-4 text-center">
-          already have an account?{" "}
+          Already have an account?{" "}
           <a
             href="/login"
             className="text-gray-700 font-bold hover:underline hover:text-rose-300 hover:text-opacity-55"
           >
-            log In
+            Log In
           </a>
         </p>
       </form>

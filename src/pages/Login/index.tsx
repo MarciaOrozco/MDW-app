@@ -95,7 +95,6 @@ const LogIn = () => {
           Log In
         </button>
         <div className="pt-4">
-          {" "}
           {firebaseError && (
             <p className="text-red-600 text-sm mb-4 text-center">
               {firebaseError}
