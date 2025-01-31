@@ -91,7 +91,7 @@ const slice = createSlice({
       .addCase(deleteBookById.fulfilled, (state, action) => {
         state.loading = false;
         state.list = state.list.filter(
-          (book) => book._id !== Number(action.payload)
+          (book) => book._id.toString() !== action.payload
         );
       })
       .addCase(deleteBookById.rejected, (state, action) => {
