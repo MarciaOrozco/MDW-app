@@ -1,8 +1,21 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getBookById, editBookById } from "../../slices/books";
 import { useDispatch, useSelector } from "../../store/store";
 import BookDetailCard from "../../components/BookDetailCard";
+import { useForm } from "react-hook-form";
+import { joiResolver } from "@hookform/resolvers/joi";
+import { addBookSchema } from "../AddBook/validation";
+
+type FormValues = {
+  name: string;
+  author: string;
+  description: string;
+  price: number;
+  image?: string;
+  isbn: string;
+  isAvailable: boolean;
+};
 
 const EditBookPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -15,12 +28,13 @@ const EditBookPage: React.FC = () => {
     error,
   } = useSelector((state) => state.reducer.books);
 
-  const [formData, setFormData] = useState({
-    name: "",
-    description: "",
-    price: "",
-    image: "",
-    author: "",
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+  } = useForm<FormValues>({
+    resolver: joiResolver(addBookSchema),
   });
 
   useEffect(() => {
@@ -31,65 +45,32 @@ const EditBookPage: React.FC = () => {
 
   useEffect(() => {
     if (book) {
-      setFormData({
-        name: book.name,
-        description: book.description,
-        price: book.price.toString(),
-        image: book.image,
-        author: book.author,
-      });
+      setValue("name", book.name);
+      setValue("author", book.author);
+      setValue("description", book.description);
+      setValue("price", book.price);
+      setValue("isbn", book.isbn);
+      setValue("image", book.image || "");
+      setValue("isAvailable", book.isAvailable || false);
     }
-  }, [book]);
+  }, [book, setValue]);
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const onSubmit = async (data: FormValues) => {
     if (id) {
-      const updatedBook = {
-        ...formData,
-        price: parseFloat(formData.price),
-      };
-      await dispatch(editBookById({ id, updatedBook }));
+      await dispatch(editBookById({ id, updatedBook: data }));
       navigate(`/books/${id}`);
     }
   };
 
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center min-h-screen">
-        <h2 className="text-xl font-semibold text-gray-600">Loading...</h2>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="flex justify-center items-center min-h-screen">
-        <h2 className="text-xl font-semibold text-red-500">{error}</h2>
-      </div>
-    );
-  }
-
-  if (!book) {
-    return (
-      <div className="flex justify-center items-center min-h-screen">
-        <h2 className="text-xl font-semibold text-gray-600">Book not found</h2>
-      </div>
-    );
-  }
+  if (loading) return <div className="text-center">Loading...</div>;
+  if (error) return <div className="text-center text-red-500">{error}</div>;
+  if (!book) return <div className="text-center">Book not found</div>;
 
   return (
     <div className="min-h-screen bg-gray-100 p-8 flex flex-col items-center">
       <BookDetailCard book={book} />
-
       <form
-        onSubmit={handleSubmit}
+        onSubmit={handleSubmit(onSubmit)}
         className="bg-gray-50 text-stone-700 shadow-lg rounded-lg p-8 mt-8 max-w-lg w-full font-mono"
       >
         <h2 className="text-2xl font-bold text-gray-800 mb-6">Edit Book</h2>
@@ -97,25 +78,23 @@ const EditBookPage: React.FC = () => {
         <div className="mb-4">
           <label className="block text-gray-700 font-medium mb-2">Name</label>
           <input
-            type="text"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
+            {...register("name")}
             className="w-full px-4 py-2 rounded-lg bg-white text-gray-500 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-rose-200"
-            required
           />
+          {errors.name && (
+            <p className="text-red-500 text-sm">{errors.name.message}</p>
+          )}
         </div>
 
         <div className="mb-4">
           <label className="block text-gray-700 font-medium mb-2">Author</label>
           <input
-            type="text"
-            name="author"
-            value={formData.author}
-            onChange={handleChange}
+            {...register("author")}
             className="w-full px-4 py-2 rounded-lg bg-white text-gray-500 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-rose-200"
-            required
           />
+          {errors.author && (
+            <p className="text-red-500 text-sm">{errors.author.message}</p>
+          )}
         </div>
 
         <div className="mb-4">
@@ -123,24 +102,24 @@ const EditBookPage: React.FC = () => {
             Description
           </label>
           <textarea
-            name="description"
-            value={formData.description}
-            onChange={handleChange}
+            {...register("description")}
             className="w-full px-4 py-2 rounded-lg bg-white text-gray-500 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-rose-200"
-            required
           />
+          {errors.description && (
+            <p className="text-red-500 text-sm">{errors.description.message}</p>
+          )}
         </div>
 
         <div className="mb-4">
           <label className="block text-gray-700 font-medium mb-2">Price</label>
           <input
             type="number"
-            name="price"
-            value={formData.price}
-            onChange={handleChange}
+            {...register("price")}
             className="w-full px-4 py-2 rounded-lg bg-white text-gray-500 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-rose-200"
-            required
           />
+          {errors.price && (
+            <p className="text-red-500 text-sm">{errors.price.message}</p>
+          )}
         </div>
 
         <div className="mb-4">
@@ -148,17 +127,35 @@ const EditBookPage: React.FC = () => {
             Image URL
           </label>
           <input
-            type="text"
-            name="image"
-            value={formData.image}
-            onChange={handleChange}
+            {...register("image")}
             className="w-full px-4 py-2 rounded-lg bg-white text-gray-500 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-rose-200"
           />
         </div>
 
+        <div className="mb-4">
+          <label className="block text-gray-700 font-medium mb-2">ISBN</label>
+          <input
+            type="text"
+            {...register("isbn")}
+            className="w-full px-4 py-2 rounded-lg bg-white text-gray-500 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-rose-200"
+          />
+          {errors.isbn && (
+            <p className="text-red-500 text-sm">{errors.isbn.message}</p>
+          )}
+        </div>
+
+        <div className="mb-4 flex items-center">
+          <input
+            type="checkbox"
+            {...register("isAvailable")}
+            className="mr-2"
+          />
+          <label className="text-gray-700 font-medium">Available</label>
+        </div>
+
         <button
           type="submit"
-          className="w-full hover:bg-[#d1919b]  bg-[#b9757f] text-white font-bold py-2 px-4 rounded-lg transition duration-300 "
+          className="w-full hover:bg-[#d1919b] bg-[#b9757f] text-white font-bold py-2 px-4 rounded-lg transition duration-300"
         >
           Save Changes
         </button>
