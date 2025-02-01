@@ -28,9 +28,6 @@ const BookDetailCard: React.FC<BookDetailCardProps> = ({ book }) => {
           <p className="text-gray-800">
             <span className="font-bold">Price:</span> ${book.price}
           </p>
-          <p className="text-gray-800">
-            <span className="font-bold">Language:</span> English
-          </p>
           <p className="text-gray-500 text-sm mt-4">
             {book.isAvailable
               ? "Available in our inventory. Order now!"
