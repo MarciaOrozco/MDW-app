@@ -2,7 +2,7 @@ import axios from "axios";
 import { getAuth, getIdToken, onAuthStateChanged } from "firebase/auth";
 
 const api = axios.create({
-  baseURL: "http://localhost:4000/",
+  baseURL: "https://mdw-backend.vercel.app/",
 });
 
 const getUserToken = async () => {
