@@ -40,9 +40,18 @@ export const editBookById = createAsyncThunk(
 
 export const addBook = createAsyncThunk(
   "books/addBook",
-  async (newBook: Partial<Book>) => {
-    const response = await api.post("/books", newBook);
-    return response.data.data;
+  async (newBook: Partial<Book>, { rejectWithValue }) => {
+    try {
+      const response = await api.post("/books", newBook);
+      return response.data.data;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (err: any) {
+      return rejectWithValue(
+        err.response?.data ?? {
+          message: "An error occurred. Please try again.",
+        }
+      );
+    }
   }
 );
 

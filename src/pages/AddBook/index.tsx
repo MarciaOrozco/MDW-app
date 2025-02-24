@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
@@ -26,6 +25,7 @@ const AddBookPage: React.FC = () => {
     register,
     handleSubmit,
     formState: { errors },
+    setError,
   } = useForm<FormValues>({
     resolver: joiResolver(addBookSchema),
   });
@@ -36,8 +36,20 @@ const AddBookPage: React.FC = () => {
         ...data,
         price: parseFloat(data.price.toString()),
       };
-      await dispatch(addBook(newBook));
-      navigate("/books");
+      const result = await dispatch(addBook(newBook));
+
+      if (addBook.fulfilled.match(result)) {
+        navigate("/books");
+      } else if (addBook.rejected.match(result)) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const errorMessage: any = result;
+        if (errorMessage.payload.message === "This book already exists") {
+          setError("isbn", {
+            type: "manual",
+            message: "This book already exists",
+          });
+        }
+      }
     } catch (err) {
       console.error("Error adding book:", err);
     }
